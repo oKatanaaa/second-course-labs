@@ -168,12 +168,18 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
         return interpolatedY;
     }
 
+    /**
+     * This function return link to the first node which X value is
+     * lesser than new X parameter value
+     * @param x
+     * @return
+     */
     private FunctionNode findLeftNodeNeighbor(double x){
         FunctionNode temp = this.head.next;
         while(x >= temp.point.getX()){
             temp = temp.next;
         }
-        return temp;
+        return temp.prev;
     }
 
     @Override
@@ -240,5 +246,33 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
 
         getNodeByIndex(index).point.setX(x);
     }
+    @Override
+    public void setPointY(int index, double y){
+        if(index < 0 || this.size < index)
+            throw new FunctionPointIndexOutOfBoundsException("Index out of boundaries");
+
+        getNodeByIndex(index).point.setY(y);
+    }
+
+    @Override
+    public void deletePoint(int index){
+        FunctionNode leftNodeNeighbor = getNodeByIndex(index - 1);
+        FunctionNode rightNodeNeighbor = getNodeByIndex(index + 1);
+
+        leftNodeNeighbor.next = rightNodeNeighbor;
+        rightNodeNeighbor.prev = leftNodeNeighbor;
+    }
+
+    @Override
+    public void addPoint(FunctionPoint point) throws InappropriateFunctionPointException{
+        FunctionNode leftNodeNeighbor = findLeftNodeNeighbor(point.getX());
+        // Point with this X value already exists
+        if(Double.compare(leftNodeNeighbor.point.getX(), point.getX()) == 0)
+            throw new InappropriateFunctionPointException();
+
+        addNode(new FunctionNode(point), leftNodeNeighbor, leftNodeNeighbor.next);
+    }
+
+
 }
-//tes
+
