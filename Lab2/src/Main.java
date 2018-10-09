@@ -23,23 +23,118 @@ public class Main{
         test.setPoint(3, new FunctionPoint(-0.5, 2));
         System.out.println("SetPoint[3](0.5,2): " + '\n' + test);
         // Incorrect setting
-        test.setPoint(3, new FunctionPoint(6, 2));
-        System.out.println("SetPoint[3](6,2): " + '\n' + test);
+        try {
+            test.setPoint(3, new FunctionPoint(6, 2));
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            System.out.println("SetPoint[3](6,2): " + '\n' + test);
+        }
         // Change Yvalue at third FunctionPoint
         test.setPointY(3, 10);
         System.out.println("SetPointY(3,10): " + '\n' + test);
         // Test add and delete
-        test.addPoint(new FunctionPoint(3,28));
-        System.out.println("addPoint(3,28): " + '\n' + test);
-        for(int i = 0; i < 8; i++){
-            test.addPoint(new FunctionPoint(i+0.1,28));
+        try {
+            test.addPoint(new FunctionPoint(3, 28));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println("addPoint(3,28): " + '\n' + test);
         }
-        System.out.println("addPoint(3,28): " + '\n' + test);
+        try {
+            for (int i = 0; i < 8; i++) {
+                test.addPoint(new FunctionPoint(i + 0.1, 28));
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println("addPoint(3,28): " + '\n' + test);
+        }
         test.deletePoint(test.getPointsCount() - 1);
         System.out.println("deletePoint(last): " + '\n' + test);
         test.deletePoint(2);
         System.out.println("deletePoint(2): " + '\n' + test);
 
+        // Testing new list
+        System.out.println("\nTEST LIST\n");
+        TabulatedFunction newTest = new ArrayTabulatedFunction(0, 10, new double[]{10.0, 15.0, 20.0, 30.0, 50.0, 100.0});
+        try {
+            newTest.addPoint(new FunctionPoint(-1, 0));
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            System.out.println(newTest);
+        }
+
+
+        try {
+            newTest.setPoint(0, new FunctionPoint(99, 0));
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            System.out.println(newTest);
+        }
+
+        try {
+            for (int i = 6; i > 0; --i) {
+                newTest.deletePoint(i);
+                System.out.println(newTest);
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            System.out.println(newTest);
+        }
+
+        try {
+            newTest = new ArrayTabulatedFunction(0, 0, null);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            System.out.println(newTest);
+        }
+
+        try {
+            newTest = new ArrayTabulatedFunction(0, 0, 0);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            System.out.println(newTest);
+        }
+
+        System.out.println("\nTEST LIST\n");
+        TabulatedFunction newTest2 = new LinkedListTabulatedFunction(0, 10, new double[]{10.0, 15.0, 20.0, 30.0, 50.0, 100.0});
+        System.out.println(newTest2);
+        try {
+            newTest2.addPoint(new FunctionPoint(-1, 0));
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            System.out.println(newTest2);
+        }
+
+
+        try {
+            newTest2.setPoint(0, new FunctionPoint(99, 0));
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            System.out.println(newTest2);
+        }
+
+        try {
+            for (int i = 6; i > 0; --i) {
+                newTest2.deletePoint(i);
+                System.out.println(newTest2);
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            System.out.println(newTest2);
+        }
+
+        try {
+            newTest2 = new LinkedListTabulatedFunction(0, 0, null);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            System.out.println(newTest2);
+        }
+
+        try {
+            newTest2 = new LinkedListTabulatedFunction(0, 1, 0);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            System.out.println(newTest2);
+        }
 
     }
 }

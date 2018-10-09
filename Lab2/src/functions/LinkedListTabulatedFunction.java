@@ -25,11 +25,16 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
             this.prev = null;
             this.next = null;
         }
+
+        public String toString(){
+            return point.toString();
+        }
     }
 
     private FunctionNode head;
     {
         head = new FunctionNode();
+        head.point = new FunctionPoint();
         head.prev = head;
         head.next = head;
     }
@@ -42,10 +47,13 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
 
     public LinkedListTabulatedFunction(double leftX, double rightX, int count){
         if(leftX > rightX)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("leftX cannot be greater rightX!");
 
-        if(Addition.doubleEquals(leftX,rightX))
-            throw new IllegalArgumentException();
+        if(Double.compare(leftX,rightX) == 0)
+            throw new IllegalArgumentException("leftX must be different from rightX!");
+
+        if(count < 2)
+            throw new IllegalArgumentException("count must be >= 2!");
 
         double deltaX = (rightX - leftX) / (count - 1);
 
@@ -56,15 +64,13 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
 
         FunctionNode lastNode = new FunctionNode(new FunctionPoint(rightX, 0));
         addNodeToTail(lastNode);
-        size = count;
     }
-
     public LinkedListTabulatedFunction(double leftX, double rightX, double[] values){
         if(leftX > rightX)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("leftX cannot be greater rightX!");
 
-        if(Addition.doubleEquals(leftX,rightX))
-            throw new IllegalArgumentException();
+        if(Double.compare(leftX,rightX) == 0)
+            throw new IllegalArgumentException("leftX must be different from rightX!");
 
         double deltaX = (rightX - leftX) / (values.length - 1);
 
@@ -75,22 +81,24 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
 
         FunctionNode lastNode = new FunctionNode(new FunctionPoint(rightX, values[values.length - 1]));
         addNodeToTail(lastNode);
-        size = values.length;
     }
 
     /**
      * This function insert node into position between head and head.prev
      * in order to get increasing sequence while filling the list
-     * DOES NOT UPDATE SIZE OF THE LIST!
      * @param newNode
      */
     private void addNodeToTail(FunctionNode newNode){
         newNode.prev = this.head.prev;
         newNode.next = this.head;
+        this.head.prev.next = newNode;
         this.head.prev = newNode;
+
         // If list contains only head
-        if(size == 0)
+        if(this.size == 0)
             this.head.next = newNode;
+
+        this.size++;
     }
 
     private FunctionNode getNodeByIndex(int index){
@@ -112,7 +120,6 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
 
     /**
      * Insert newNode in between of leftNode and rightNode
-     * DOES NOT UPDATE SIZE OF THE LIST!
      * @param newNode
      * @param leftNode
      * @param rightNode
@@ -122,6 +129,8 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
         rightNode.prev = newNode;
         newNode.prev = leftNode;
         newNode.next = rightNode;
+
+        this.size++;
     }
     private FunctionNode addNodeByIndex(int index){
         FunctionNode newNode = new FunctionNode();
@@ -190,7 +199,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
     @Override
     public FunctionPoint getPoint(int index) {
         if(index < 0 || this.size < index)
-            throw new FunctionPointIndexOutOfBoundsException();
+            throw new FunctionPointIndexOutOfBoundsException("Index is out of boundaries");
 
         FunctionPoint temp = getNodeByIndex(index).point;
         return new FunctionPoint(temp);
@@ -198,7 +207,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
     @Override
     public double getPointY(int index) {
         if(index < 0 || this.size < index)
-            throw new FunctionPointIndexOutOfBoundsException("Index out of boundaries");
+            throw new FunctionPointIndexOutOfBoundsException("Index is out of boundaries");
 
         FunctionPoint temp = getNodeByIndex(index).point;
         return temp.getY();
@@ -206,7 +215,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
     @Override
     public double getPointX(int index) {
         if(index < 0 || this.size < index)
-            throw new FunctionPointIndexOutOfBoundsException("Index out of boundaries");
+            throw new FunctionPointIndexOutOfBoundsException("Index is out of boundaries");
 
         FunctionPoint temp = getNodeByIndex(index).point;
         return temp.getX();
@@ -219,17 +228,18 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
 
         // Check if new first x value is bigger than second x value(it is error) x0New > x1 < x2 < x3 < x4...
         if(index == 0 && point.getX() > getNodeByIndex(1).point.getX())
-            throw new InappropriateFunctionPointException();
+            throw new InappropriateFunctionPointException("New X value at [index] is bigger than X value at [index + 1]");
         // Check if new last x value is lesser than previous x value(it is error) ...x8 < x9 < x10 < x11 > x12New
         if(index == this.size - 1 && point.getX() < getNodeByIndex(this.size - 2).point.getX())
-            throw new InappropriateFunctionPointException();
+            throw new InappropriateFunctionPointException("New X value at [index] is lesser than X value at [index - 1]");
         // Check if this expression is false: xPrevious < xNew < xNext
         FunctionNode toUpdate = getNodeByIndex(index);
         double xPrev = toUpdate.prev.point.getX();
         double xNext = toUpdate.next.point.getX();
         if(this.size > 2 &&
                 (point.getX() < xPrev || xNext < point.getX()))
-            throw new InappropriateFunctionPointException();
+            throw new InappropriateFunctionPointException("New X value at [index] is bigger than X value at [index + 1] or \n" +
+                    "New X value at [index] is lesser than X value at [index - 1]");
 
         toUpdate.point = new FunctionPoint(point);
     }
@@ -256,11 +266,19 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
 
     @Override
     public void deletePoint(int index){
+        if(index < 0 || this.size < index)
+            throw new FunctionPointIndexOutOfBoundsException("Index out of boundaries");
+
+        if(this.size < 3)
+            throw new IllegalStateException("List contains less than 3 points!");
+
         FunctionNode leftNodeNeighbor = getNodeByIndex(index - 1);
         FunctionNode rightNodeNeighbor = getNodeByIndex(index + 1);
 
         leftNodeNeighbor.next = rightNodeNeighbor;
         rightNodeNeighbor.prev = leftNodeNeighbor;
+
+        this.size--;
     }
 
     @Override
@@ -268,11 +286,26 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
         FunctionNode leftNodeNeighbor = findLeftNodeNeighbor(point.getX());
         // Point with this X value already exists
         if(Double.compare(leftNodeNeighbor.point.getX(), point.getX()) == 0)
-            throw new InappropriateFunctionPointException();
+            throw new InappropriateFunctionPointException("Point with this X value already is in array!");
 
         addNode(new FunctionNode(point), leftNodeNeighbor, leftNodeNeighbor.next);
     }
 
+
+    @Override
+    public String toString(){
+        StringBuffer stringList = new StringBuffer();
+        stringList.append("[ ");
+
+        FunctionNode temp = head.next;
+
+        while(temp != head){
+            stringList.append(temp + " ");
+            temp = temp.next;
+        }
+        stringList.append("]");
+        return stringList.toString();
+    }
 
 }
 

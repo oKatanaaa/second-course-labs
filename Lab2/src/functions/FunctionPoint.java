@@ -11,13 +11,13 @@ public class FunctionPoint{
     }
 
     public FunctionPoint(FunctionPoint point){
-        x = point.x;
-        y = point.y;
+        this.x = point.x;
+        this.y = point.y;
     }
-    //dsfd
+
     public FunctionPoint(){
-        x = 0;
-        y = 0;
+        this.x = 0;
+        this.y = 0;
     }
 
     public double getX(){
@@ -37,6 +37,9 @@ public class FunctionPoint{
     }
 
     public String toString(){
-        return "(" + x + "," + y + ")";
+        if(this == null)
+            return "null";
+        else
+            return "(" + x + "," + y + ")";
     }
 }
