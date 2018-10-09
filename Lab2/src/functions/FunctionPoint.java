@@ -14,7 +14,7 @@ public class FunctionPoint{
         x = point.x;
         y = point.y;
     }
-
+    //dsfd
     public FunctionPoint(){
         x = 0;
         y = 0;
