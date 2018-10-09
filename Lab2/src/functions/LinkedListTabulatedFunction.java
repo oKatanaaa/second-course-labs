@@ -241,4 +241,4 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
         getNodeByIndex(index).point.setX(x);
     }
 }
-//test
+//tes
