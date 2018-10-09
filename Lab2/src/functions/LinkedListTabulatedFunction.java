@@ -242,3 +242,4 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
     }
 }
 //test
+//test2
