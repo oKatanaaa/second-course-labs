@@ -227,4 +227,17 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
 
         toUpdate.point = new FunctionPoint(point);
     }
+    @Override
+    public void setPointX(int index, double x) throws InappropriateFunctionPointException {
+        if(index < 0 || this.size < index)
+            throw new FunctionPointIndexOutOfBoundsException("Index out of boundaries");
+        // New x value is bigger than rightX value
+        if(index == 0 && x > getNodeByIndex(index + 1).point.getX())
+            throw new InappropriateFunctionPointException("X value is out of interval");
+        // New x value is lesser than leftX value
+        if(x < getNodeByIndex(index - 1).point.getX() || getNodeByIndex(index + 1).point.getX() < x)
+            throw new InappropriateFunctionPointException("X value is out of interval");
+
+        getNodeByIndex(index).point.setX(x);
+    }
 }
