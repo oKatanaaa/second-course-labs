@@ -8,12 +8,6 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
         private FunctionNode prev;
         private FunctionNode next;
 
-        public FunctionNode(FunctionPoint point, FunctionNode prev, FunctionNode next){
-            this.point = point;
-            this.prev = prev;
-            this.next = next;
-        }
-
         public FunctionNode(){
             this.point = null;
             this.prev = null;
