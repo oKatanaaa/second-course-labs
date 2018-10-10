@@ -147,11 +147,12 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
         rightNode.prev = leftNode;
         return deletedNode;
     }
-
+    @Override
     public double getLeftDomainBorder() {
         FunctionNode leftNode = getNodeByIndex(0);
         return leftNode.point.getX();
     }
+    @Override
     public double getRightDomainBorder() {
         FunctionNode rightNode = getNodeByIndex(size-1);
         return rightNode.point.getX();
