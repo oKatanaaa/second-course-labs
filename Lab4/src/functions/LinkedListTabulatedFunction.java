@@ -163,12 +163,12 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
     }
     @Override
     public double getLeftDomainBorder() {
-        FunctionNode leftNode = head.next;
+        FunctionNode leftNode = this.head.next;
         return leftNode.point.getX();
     }
     @Override
     public double getRightDomainBorder() {
-        FunctionNode rightNode = head.prev;
+        FunctionNode rightNode = this.head.prev;
         return rightNode.point.getX();
     }
 
@@ -312,9 +312,9 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
         StringBuffer stringList = new StringBuffer();
         stringList.append("[ ");
 
-        FunctionNode temp = head.next;
+        FunctionNode temp = this.head.next;
 
-        while(temp != head){
+        while(temp != this.head){
             stringList.append(temp + " ");
             temp = temp.next;
         }
