@@ -17,6 +17,7 @@ public class ArrayTabulatedFunction implements TabulatedFunction{
 
         double prevX = points[0].getX();
         this.array[0] = new FunctionPoint(points[0]);
+
         for(int i = 1; i < points.length; i++){
             // Check x value order. It must an increasing sequence
             if(prevX > points[i].getX() || Double.compare(points[i].getX(),prevX) == 0)

@@ -38,6 +38,24 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
         this.size = 0;
     }
 
+    public LinkedListTabulatedFunction(FunctionPoint[] points){
+        if(points.length < 2)
+            throw new IllegalArgumentException();
+
+        double prevX = points[0].getX();
+        addNodeToTail(new FunctionNode(points[0]));
+
+        for(int i = 1; i < points.length; i++){
+            // Check x value order. It must an increasing sequence
+            if(prevX > points[i].getX() || Double.compare(points[i].getX(),prevX) == 0)
+                throw new IllegalArgumentException();
+
+            prevX = points[i].getX();
+            FunctionNode temp = new FunctionNode(points[i]);
+            addNodeToTail(temp);
+        }
+    }
+
     public LinkedListTabulatedFunction(double leftX, double rightX, int count){
         if(leftX > rightX)
             throw new IllegalArgumentException("leftX cannot be greater rightX!");
