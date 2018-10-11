@@ -1,12 +1,31 @@
 package functions;
 
 
-
 public class ArrayTabulatedFunction implements TabulatedFunction{
 
     private int pointsCount;
     private int capacity;
     private FunctionPoint[] array;
+
+    public ArrayTabulatedFunction(FunctionPoint[] points){
+        if(points.length < 2)
+            throw new IllegalArgumentException();
+
+        this.pointsCount = points.length;
+        this.capacity = this.pointsCount * 2;
+        this.array = new FunctionPoint[this.capacity];
+
+        double prevX = points[0].getX();
+        this.array[0] = new FunctionPoint(points[0]);
+        for(int i = 1; i < points.length; i++){
+            // Check x value order. It must an increasing sequence
+            if(prevX > points[i].getX() || Double.compare(points[i].getX(),prevX) == 0)
+                throw new IllegalArgumentException();
+
+            prevX = points[i].getX();
+            this.array[i] = new FunctionPoint(points[i]);
+        }
+    }
 
     public ArrayTabulatedFunction(double leftX, double rightX, int pointsCount){
         if(leftX > rightX)
@@ -16,8 +35,8 @@ public class ArrayTabulatedFunction implements TabulatedFunction{
             throw new IllegalArgumentException();
 
         this.pointsCount = pointsCount;
-        capacity = 2 * pointsCount;
-        array = new FunctionPoint[capacity];
+        this.capacity = 2 * pointsCount;
+        this.array = new FunctionPoint[this.capacity];
 
         fillArray(leftX, rightX, pointsCount);
     }
@@ -29,9 +48,9 @@ public class ArrayTabulatedFunction implements TabulatedFunction{
         if(Double.compare(leftX,rightX) == 0)
             throw new IllegalArgumentException();
 
-        pointsCount = values.length;
-        capacity = 2 * pointsCount;
-        array = new FunctionPoint[capacity];
+        this.pointsCount = values.length;
+        this.capacity = 2 * this.pointsCount;
+        this.array = new FunctionPoint[this.capacity];
 
         fillArray(leftX, rightX, values);
     }
@@ -39,113 +58,113 @@ public class ArrayTabulatedFunction implements TabulatedFunction{
     private void fillArray(double leftX, double rightX, int pointsCount){
         double deltaX = (rightX - leftX) / (pointsCount - 1);
         for(int i = 0; i < pointsCount - 1; i++)
-            array[i] = new FunctionPoint(leftX + deltaX*i, 0);
+            this.array[i] = new FunctionPoint(leftX + deltaX*i, 0);
 
         // We need this assignment because of double inaccuracy
-        array[pointsCount - 1] = new FunctionPoint(rightX, 0);
+        this.array[pointsCount - 1] = new FunctionPoint(rightX, 0);
     }
     private void fillArray(double leftX, double rightX, double[] values){
-        double deltaX = (rightX - leftX) / (pointsCount-1);
-        for(int i = 0; i < pointsCount - 1; i++)
-            array[i] = new FunctionPoint(leftX + deltaX*i, values[i]);
+        double deltaX = (rightX - leftX) / (this.pointsCount-1);
+        for(int i = 0; i < this.pointsCount - 1; i++)
+            this.array[i] = new FunctionPoint(leftX + deltaX*i, values[i]);
 
         // We need this assignment because of double inaccuracy
-        array[pointsCount - 1] = new FunctionPoint(rightX, values[pointsCount - 1]);
+        this.array[this.pointsCount - 1] = new FunctionPoint(rightX, values[this.pointsCount - 1]);
     }
 
     public double getLeftDomainBorder() {
-        return array[0].getX();
+        return this.array[0].getX();
     }
     public double getRightDomainBorder() {
-        return array[pointsCount - 1].getX();
+        return this.array[this.pointsCount - 1].getX();
     }
 
     public double getFunctionValue(double x){
-        if(!isBetweenLeftRightBorders(x, 0, pointsCount - 1))
+        if(!isBetweenLeftRightBorders(x, 0, this.pointsCount - 1))
             return Double.NaN;
         int i = isAlreadyInArray(x);
         // Try to find indexes x is located between (index, index + 1)
         if(i == -1)
             i = findX(x);
-        double x1 = array[i].getX();
-        double x2 = array[i+1].getX();
-        double y1 = array[i].getY();
-        double y2 = array[i+1].getY();
+        double x1 = this.array[i].getX();
+        double x2 = this.array[i+1].getX();
+        double y1 = this.array[i].getY();
+        double y2 = this.array[i+1].getY();
         double interpolatedY = (x-x1)/(x2-x1)*(y2-y1) + y1;
         return interpolatedY;
     }
     public int getPointsCount(){
-        return pointsCount;
+        return this.pointsCount;
     }
 
     public FunctionPoint getPoint(int index){
-        if(index < 0 || pointsCount < index)
+        if(index < 0 || this.pointsCount < index)
             throw new FunctionPointIndexOutOfBoundsException();
 
-        return new FunctionPoint(array[index]);
+        return new FunctionPoint(this.array[index]);
     }
     public double getPointY(int index){
-        if(index < 0 || pointsCount < index)
+        if(index < 0 || this.pointsCount < index)
             throw new FunctionPointIndexOutOfBoundsException("Index out of boundaries");
 
-        return array[index].getY();
+        return this.array[index].getY();
     }
     public double getPointX(int index){
-        if(index < 0 || pointsCount < index)
+        if(index < 0 || this.pointsCount < index)
             throw new FunctionPointIndexOutOfBoundsException("Index out of boundaries");
 
-        return array[index].getX();
+        return this.array[index].getX();
     }
 
     public void setPoint(int index, FunctionPoint point) throws InappropriateFunctionPointException {
-        if(index < 0 || pointsCount < index)
+        if(index < 0 || this.pointsCount < index)
             throw new FunctionPointIndexOutOfBoundsException();
 
         // Check if new first x value is bigger than second x value(it is error) x0New > x1 < x2 < x3 < x4...
-        if(index == 0 && point.getX() > array[1].getX())
+        if(index == 0 && point.getX() > this.array[1].getX())
             throw new InappropriateFunctionPointException();
         // Check if new last x value is lesser than previous x value(it is error) ...x8 < x9 < x10 < x11 > x12New
-        if(index == pointsCount - 1 && point.getX() < array[pointsCount - 2].getX())
+        if(index == this.pointsCount - 1 && point.getX() < this.array[this.pointsCount - 2].getX())
             throw new InappropriateFunctionPointException();
         // Check if this expression is false: xPrevious < xNew < xNext
-        if(pointsCount > 2 && !isBetweenLeftRightBorders(point.getX(), index - 1, index + 1))
+        if(this.pointsCount > 2 && !isBetweenLeftRightBorders(point.getX(), index - 1, index + 1))
             throw new InappropriateFunctionPointException();
 
         FunctionPoint newPoint = new FunctionPoint(point);
-        array[index] = newPoint;
+        this.array[index] = newPoint;
     }
     public void setPointX(int index, double x) throws InappropriateFunctionPointException{
-        if(index < 0 || pointsCount < index)
+        if(index < 0 || this.pointsCount < index)
             throw new FunctionPointIndexOutOfBoundsException("Index out of boundaries");
 
-        if(index == 0 && x > array[index + 1].getX())
+        if(index == 0 && x > this.array[index + 1].getX())
             throw new InappropriateFunctionPointException("X value is out of interval");
 
-        if(x < array[index - 1].getX() || array[index + 1].getX() < x)
+        if(x < this.array[index - 1].getX() || this.array[index + 1].getX() < x)
             throw new InappropriateFunctionPointException("X value is out of interval");
 
-        array[index].setX(x);
+        this.array[index].setX(x);
     }
     public void setPointY(int index, double y){
-        if(index < 0 || pointsCount < index)
+        if(index < 0 || this.pointsCount < index)
             throw new FunctionPointIndexOutOfBoundsException("Index out of boundaries");
 
-        array[index].setY(y);
+        this.array[index].setY(y);
     }
 
     public void deletePoint(int index){
-        if(index < 0 || pointsCount < index)
+        if(index < 0 || this.pointsCount < index)
             throw new FunctionPointIndexOutOfBoundsException("Index out of boundaries");
 
-        if(pointsCount < 3)
+        if(this.pointsCount < 3)
             throw new IllegalStateException();
-        for(int i = index; i < pointsCount-1; i++)
-            array[i] = array[i+1];
-        pointsCount--;
+        for(int i = index; i < this.pointsCount-1; i++)
+            this.array[i] = this.array[i+1];
+        this.pointsCount--;
     }
     public void addPoint(FunctionPoint point) throws InappropriateFunctionPointException {
-        if(capacity == pointsCount + 1)
-            reserve(capacity*2);
+        if(this.capacity == this.pointsCount + 1)
+            reserve(this.capacity*2);
         
         int newInd = findX(point.getX());
         // Is below left domain order
@@ -153,35 +172,35 @@ public class ArrayTabulatedFunction implements TabulatedFunction{
             insert(0, point);
         // Is above left domain order
         else if(newInd == -2)
-            insert(pointsCount, point);
+            insert(this.pointsCount, point);
         // Is in domain of definition
         else if(newInd == -3)
             throw new IllegalArgumentException("Unknown error!");
         // Check if new point already is in array
-        else if(array[newInd].getX() == point.getX() && array[newInd].getY() == point.getY())
+        else if(this.array[newInd].getX() == point.getX() && this.array[newInd].getY() == point.getY())
             throw new InappropriateFunctionPointException();
         else
             insert(newInd+1, point);
-        pointsCount++;
+        this.pointsCount++;
     }
 
     // PRIVATE FUNCTIONS
 
     private void insert(int index, FunctionPoint point){
         // This function turns each element to the right from index position
-        for(int i = pointsCount - 1; i > index - 1; i--)
-            array[i + 1] = array[i];
-        
-        array[index] = new FunctionPoint(point);
+        for(int i = this.pointsCount - 1; i > index - 1; i--)
+            this.array[i + 1] = this.array[i];
+
+        this.array[index] = new FunctionPoint(point);
     }
     private void reserve(int newSize){
         FunctionPoint[] newArray = new FunctionPoint[newSize];
-        for(int i = 0; i < pointsCount; i++)
-            newArray[i] = array[i];
-        array = newArray;
+        for(int i = 0; i < this.pointsCount; i++)
+            newArray[i] = this.array[i];
+        this.array = newArray;
     }
     private boolean isBetweenLeftRightBorders(double x, int leftBorderInd, int rightBorderInd){
-        return array[leftBorderInd].getX() <= x && x <= array[rightBorderInd].getX();
+        return this.array[leftBorderInd].getX() <= x && x <= this.array[rightBorderInd].getX();
     }
     private int findX(double x){
         /* This method finds two Points x is between and returns the index of the left Point. 
@@ -189,13 +208,13 @@ public class ArrayTabulatedFunction implements TabulatedFunction{
         else - return -3;
         */
         // Check if x is below the left domain border
-        if(x < array[0].getX())
+        if(x < this.array[0].getX())
             return -1;
         // Check if x is above the right domain border
-        if(array[pointsCount - 1].getX() < x)
+        if(this.array[this.pointsCount - 1].getX() < x)
             return -2;
-        for(int i = 0; i < pointsCount - 1; i++)
-            if(x < array[i].getX())
+        for(int i = 0; i < this.pointsCount - 1; i++)
+            if(x < this.array[i].getX())
                 return i - 1;
         return -3;
     }
@@ -206,8 +225,8 @@ public class ArrayTabulatedFunction implements TabulatedFunction{
     public String toString(){
         StringBuffer temp = new StringBuffer();
         temp.append("[ ");
-        for(int i = 0; i < pointsCount; ++i){
-            temp.append(array[i] + " ");
+        for(int i = 0; i < this.pointsCount; ++i){
+            temp.append(this.array[i] + " ");
         }
         temp.append("]");
         return temp.toString();
@@ -216,8 +235,8 @@ public class ArrayTabulatedFunction implements TabulatedFunction{
     private int isAlreadyInArray(double x){
         // This method checks if x is already in array.
         // If it is - return index position, if not - return 1
-        for(int i = 0; i < pointsCount; ++i)
-            if(Double.compare(x, array[i].getX()) == 0)
+        for(int i = 0; i < this.pointsCount; ++i)
+            if(Double.compare(x, this.array[i].getX()) == 0)
                 return i;
         return -1;
     }

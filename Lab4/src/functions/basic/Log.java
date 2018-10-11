@@ -32,6 +32,7 @@ public class Log implements Function {
     public double getFunctionValue(double x) {
         if(x < 0 || Double.compare(x, 0.0) == 0)
             throw new IllegalArgumentException();
+
         return Math.log(x)/Math.log(base);
     }
 }
