@@ -1,6 +1,5 @@
 package functions;
 
-import help.*;
 
 public class LinkedListTabulatedFunction implements TabulatedFunction{
     private static class FunctionNode{
@@ -65,6 +64,9 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
 
         if(Double.compare(leftX,rightX) == 0)
             throw new IllegalArgumentException("leftX must be different from rightX!");
+
+        if(values.length < 2)
+            throw new IllegalArgumentException("count must be >= 2!");
 
         double deltaX = (rightX - leftX) / (values.length - 1);
 
@@ -143,12 +145,12 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
     }
     @Override
     public double getLeftDomainBorder() {
-        FunctionNode leftNode = getNodeByIndex(0);
+        FunctionNode leftNode = head.next;
         return leftNode.point.getX();
     }
     @Override
     public double getRightDomainBorder() {
-        FunctionNode rightNode = getNodeByIndex(size-1);
+        FunctionNode rightNode = head.prev;
         return rightNode.point.getX();
     }
 
@@ -161,7 +163,7 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
 
         FunctionNode leftNode = findLeftNodeNeighbor(x);
         // x already is in the list
-        if(Addition.doubleEquals(leftNode.point.getX(), x))
+        if(Double.compare(leftNode.point.getX(), x) == 0)
             return leftNode.point.getY();
 
         double x1 = leftNode.point.getX();
