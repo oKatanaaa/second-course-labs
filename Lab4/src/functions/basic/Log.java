@@ -6,6 +6,9 @@ public class Log implements Function {
     private double base;
 
     public Log(double base){
+        if(base < 1 || Double.compare(base, 1.0) == 0)
+            throw new IllegalArgumentException();
+
         this.base = base;
     }
     @Override
@@ -27,6 +30,8 @@ public class Log implements Function {
      */
     @Override
     public double getFunctionValue(double x) {
+        if(x < 0 || Double.compare(x, 0.0) == 0)
+            throw new IllegalArgumentException();
         return Math.log(x)/Math.log(base);
     }
 }
