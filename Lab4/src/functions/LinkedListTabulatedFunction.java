@@ -244,9 +244,11 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
         // Check if new first x value is bigger than second x value(it is error) x0New > x1 < x2 < x3 < x4...
         if(index == 0 && point.getX() > getNodeByIndex(1).point.getX())
             throw new InappropriateFunctionPointException("New X value at [index] is bigger than X value at [index + 1]");
+
         // Check if new last x value is lesser than previous x value(it is error) ...x8 < x9 < x10 < x11 > x12New
         if(index == this.size - 1 && point.getX() < getNodeByIndex(this.size - 2).point.getX())
             throw new InappropriateFunctionPointException("New X value at [index] is lesser than X value at [index - 1]");
+
         // Check if this expression is false: xPrevious < xNew < xNext
         FunctionNode toUpdate = getNodeByIndex(index);
         double xPrev = toUpdate.prev.point.getX();
