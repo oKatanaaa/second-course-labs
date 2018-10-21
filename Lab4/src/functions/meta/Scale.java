@@ -15,16 +15,16 @@ public class Scale implements Function {
 
     @Override
     public double getLeftDomainBorder() {
-        return this.fun.getLeftDomainBorder() * scaleX;
+        return this.fun.getLeftDomainBorder() * this.scaleX;
     }
 
     @Override
     public double getRightDomainBorder() {
-        return this.fun.getRightDomainBorder() * scaleX;
+        return this.fun.getRightDomainBorder() * this.scaleX;
     }
 
     @Override
     public double getFunctionValue(double x) {
-        return this.fun.getFunctionValue(x / scaleX) * scaleY;
+        return this.fun.getFunctionValue(x / this.scaleX) * this.scaleY;
     }
 }
