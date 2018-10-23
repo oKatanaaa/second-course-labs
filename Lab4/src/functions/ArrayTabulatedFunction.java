@@ -214,7 +214,7 @@ public class ArrayTabulatedFunction implements TabulatedFunction{
         // Check if x is above the right domain border
         if(this.array[this.pointsCount - 1].getX() < x)
             return -2;
-        for(int i = 0; i < this.pointsCount - 1; i++)
+        for(int i = 1; i < this.pointsCount; i++)
             if(x < this.array[i].getX())
                 return i - 1;
         return -3;
