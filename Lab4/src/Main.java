@@ -4,6 +4,7 @@ import functions.basic.Exp;
 import functions.basic.Sin;
 
 
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -46,17 +47,38 @@ public class Main{
         x = 0;
         System.out.println();
 
+        // WRITING TABULATED FUNCTION
         TabulatedFunction tabulatedExp = TabulatedFunctions.tabulate(
                 new Exp(), 0, 10, 11
         );
         try {
-            FileWriter newFile = new FileWriter("//home//okatanaa//second-course-labs//Lab4//testFile.txt");
-            TabulatedFunctions.writeTabulatedFunction(tabulatedExp, newFile);
-            newFile.write("Hello!");
-            System.out.println(newFile.toString());
-            newFile.close();
+            FileWriter fileToWrite = new FileWriter("//home//okatanaa//second-course-labs//Lab4//testFile.txt");
+            TabulatedFunctions.writeTabulatedFunction(tabulatedExp, fileToWrite);
+            fileToWrite.close();
         } catch (IOException e){
+            e.printStackTrace();
             System.out.println(e.getMessage());
         }
+
+        // READING TABULATED FUNCTION
+
+        try {
+            FileReader fileToRead = new FileReader("//home//okatanaa//second-course-labs//Lab4//testFile.txt");
+            TabulatedFunction readedFun = TabulatedFunctions.readTabulatedFunction(fileToRead);
+            fileToRead.close();
+
+            while(x <= 10){
+                System.out.print(tabulatedExp.getFunctionValue(x) + " ");
+                System.out.print(readedFun.getFunctionValue(x) + " ");
+                x+= 1;
+            }
+        } catch (IOException e){
+            e.printStackTrace();
+            System.out.println(e.getMessage() + "4");
+        } catch (Exception e){
+            System.out.println(e.getMessage() + "4");
+        }
+
+
     }
 }

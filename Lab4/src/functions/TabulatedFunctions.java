@@ -69,12 +69,14 @@ public class TabulatedFunctions {
             BufferedWriter writer = new BufferedWriter(out);
 
             int pointsCount = fun.getPointsCount();
-            writer.write(String.valueOf(pointsCount) + " ");
+            String str = String.valueOf(pointsCount);
+            writer.write(str + " ");
 
             for(int i = 0; i < pointsCount; i++){
                 writer.write(String.valueOf(fun.getPointX(i)) + " ");
                 writer.write(String.valueOf(fun.getPointY(i)) + " ");
             }
+            writer.flush();
         }catch (IOException e){
             System.out.println(e.getMessage());
         }

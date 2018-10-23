@@ -84,9 +84,12 @@ public class ArrayTabulatedFunction implements TabulatedFunction{
         if(!isBetweenLeftRightBorders(x, 0, this.pointsCount - 1))
             return Double.NaN;
         int i = isAlreadyInArray(x);
-        // Try to find indexes x is located between (index, index + 1)
-        if(i == -1)
+
+        if(i != -1)
+            return this.array[i].getY();
+        else
             i = findX(x);
+
         double x1 = this.array[i].getX();
         double x2 = this.array[i+1].getX();
         double y1 = this.array[i].getY();
