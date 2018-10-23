@@ -73,7 +73,7 @@ public class TabulatedFunctions {
 
             for(int i = 0; i < pointsCount; i++){
                 writer.write(String.valueOf(fun.getPointX(i)) + " ");
-                writer.write(String.valueOf(fun.getPointY(i)));
+                writer.write(String.valueOf(fun.getPointY(i)) + " ");
             }
         }catch (IOException e){
             System.out.println(e.getMessage());
