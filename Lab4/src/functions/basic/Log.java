@@ -6,7 +6,7 @@ public class Log implements Function {
     private double base;
 
     public Log(double base){
-        if(base < 1 || Double.compare(base, 1.0) == 0)
+        if(base < 0 || Double.compare(base, 1.0) == 0 || Double.compare(base, 0.0) == 0)
             throw new IllegalArgumentException();
 
         this.base = base;
