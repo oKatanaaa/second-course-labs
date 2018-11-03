@@ -272,7 +272,22 @@ public class ArrayTabulatedFunction implements TabulatedFunction{
 
     @Override
     public Object clone(){
-        return new ArrayTabulatedFunction(this.array);
+        /*
+        When current TabulatedFunction is changed, actually, any element is deleted,
+        all the elements in the array moves left to the deleted element position.
+        There is a copy of the last element is in the "last" last position in
+        the array. If we pass this array into constructor it gains an exception,
+        because there are the same elements at the end of the array(it is
+        incorrect data). So we need to copy only first "this.pointsCount" of
+        elements to avoid this problem and pass a correct data. I know you
+        fucked up with this great explanation of this little problem, but I dont care,
+        I wrote it for myself.
+         */
+        FunctionPoint[] newArray = new FunctionPoint[this.pointsCount];
+        for(int i = 0; i < this.pointsCount; i++)
+            newArray[i] = this.array[i];
+
+        return new ArrayTabulatedFunction(newArray);
     }
 
 
