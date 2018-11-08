@@ -54,5 +54,8 @@ public class Main{
         tempLink2 = (LinkedListTabulatedFunction) tempLink1.clone();
         System.out.println(tempLink1);
         System.out.println(tempLink2);
+        tempLink1.deletePoint(0);
+        System.out.println(tempLink1);
+        System.out.println(tempLink2);
     }
 }
