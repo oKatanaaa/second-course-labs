@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 public class FunctionLoader extends ClassLoader {
+    public FunctionLoader() {}
+
     public Object loadFunction(String path, String className) throws IOException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         File file = new File(path);
 

@@ -1,5 +1,9 @@
 package gui.frames.dialogTableFrame;
 
+import functions.Function;
+import functions.TabulatedFunction;
+import functions.TabulatedFunctions;
+import gui.FunctionLoader;
 import gui.TabulatedFunctionDocument;
 import gui.components.DialogComponent;
 import gui.models.TabulatedFunctionTableModel;
@@ -13,14 +17,17 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.regex.Pattern;
 
 public final class DialogTableFrame extends JFrame {
-    protected DialogComponent dialogComponent;
-    protected JFileChooser fileChooser;
-    protected TabulatedFunctionTableModel tableModel;
-    protected JTable table;
-    protected TabulatedFunctionDocument functionDocument;
-    protected AddDeletePointPanel addDeletePointPanel;
+     DialogComponent dialogComponent;
+     JFileChooser fileChooser;
+     TabulatedFunctionTableModel tableModel;
+     JTable table;
+     TabulatedFunctionDocument functionDocument;
+     AddDeletePointPanel addDeletePointPanel;
+     FunctionLoader functionLoader;
 
     public DialogTableFrame() {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -38,6 +45,7 @@ public final class DialogTableFrame extends JFrame {
         this.functionDocument.newFunction(0, 10, 11);
         this.addDeletePointPanel = new AddDeletePointPanel(this);
         add(addDeletePointPanel, BorderLayout.SOUTH);
+        this.functionLoader = new FunctionLoader();
 
         setUpMenuBar();
         // Add table
@@ -86,6 +94,7 @@ public final class DialogTableFrame extends JFrame {
 
         JMenu tabulateMenu = new JMenu("Tabulate");
         JMenuItem loadAndTabulate = new JMenuItem("Load and tabulate function");
+        loadAndTabulate.addActionListener(new TabulateListener());
         tabulateMenu.add(loadAndTabulate);
         menuBar.add(tabulateMenu);
         setJMenuBar(menuBar);
@@ -235,6 +244,45 @@ public final class DialogTableFrame extends JFrame {
         @Override
         public void windowDeactivated(WindowEvent windowEvent) {
 
+        }
+    }
+
+    private class TabulateListener implements ActionListener {
+        DialogTableFrame outer = DialogTableFrame.this;
+
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            int fileChooserStatus = outer.fileChooser.showOpenDialog(DialogTableFrame.this);
+            if(fileChooserStatus == JFileChooser.APPROVE_OPTION) {
+                try {
+                    // TRY TO READ CLASS
+                    String classPath = outer.fileChooser.getSelectedFile().getPath();
+                    String className = classPath.split(Pattern.quote("."))[0];
+                    Object loadedFunction = outer.functionLoader.loadFunction(classPath, className);
+                    System.out.println(classPath.split(Pattern.quote(".")));
+                    if(!(loadedFunction instanceof Function)) {
+                        JOptionPane.showMessageDialog(outer, "File doesn't contain any function.");
+                        return;
+                    }
+                    /// TRY TO TABULATE LOADED FUNCTION
+                    int dialogComponentStatus = outer.dialogComponent.showDialog();
+                    if(dialogComponentStatus == DialogComponent.OK) {
+                        double leftDomainBorder = outer.dialogComponent.getLeftDomainBorder();
+                        double rightDomainBorder = outer.dialogComponent.getRightDomainBorder();
+                        int pointsCount = outer.dialogComponent.getPointsCount();
+
+                        Function fun = (Function) loadedFunction;
+                        outer.functionDocument.tabulateFunction(fun, leftDomainBorder, rightDomainBorder, pointsCount);
+
+                        outer.tableModel.setFun(outer.functionDocument);
+                        outer.table.revalidate();
+                        outer.table.repaint();
+                    }
+                } catch (IOException | IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+                    JOptionPane.showMessageDialog(outer, e.getMessage());
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

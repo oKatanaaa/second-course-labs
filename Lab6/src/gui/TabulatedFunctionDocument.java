@@ -17,6 +17,7 @@ public class TabulatedFunctionDocument implements TabulatedFunction{
         this.tabulatedFunction = new ArrayTabulatedFunction(leftX, rightX, pointsCount);
     }
 
+
     public void saveFunction() throws IOException {
         FileWriter file = new FileWriter(this.fileName);
         TabulatedFunctions.writeTabulatedFunction(this.tabulatedFunction, file);
