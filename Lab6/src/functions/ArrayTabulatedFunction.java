@@ -184,7 +184,12 @@ public class ArrayTabulatedFunction implements TabulatedFunction{
             throw new IllegalArgumentException("Unknown error!");
         // Check if new point already is in array
         else if(this.array[newInd].getX() == point.getX() && this.array[newInd].getY() == point.getY())
-            throw new InappropriateFunctionPointException();
+            throw new InappropriateFunctionPointException("Point already is in array!");
+        // Replace existing point if new point.x == array[newInd].x
+        else if(this.array[newInd].getX() == point.getX()) {
+            this.array[newInd].setY(point.getY());
+            return;
+        }
         else
             insert(newInd+1, point);
         this.pointsCount++;

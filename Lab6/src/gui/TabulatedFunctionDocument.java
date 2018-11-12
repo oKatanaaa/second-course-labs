@@ -21,6 +21,7 @@ public class TabulatedFunctionDocument implements TabulatedFunction{
         FileWriter file = new FileWriter(this.fileName);
         TabulatedFunctions.writeTabulatedFunction(this.tabulatedFunction, file);
         file.close();
+        this.modified = false;
     }
 
     public void saveFunctionAs(String fileName) throws IOException {
@@ -32,6 +33,7 @@ public class TabulatedFunctionDocument implements TabulatedFunction{
         FileWriter file = new FileWriter(fileName);
         TabulatedFunctions.writeTabulatedFunction(this.tabulatedFunction, file);
         file.close();
+        this.modified = false;
     }
 
     public void loadFunction(String fileName) throws FileNotFoundException {
@@ -79,40 +81,35 @@ public class TabulatedFunctionDocument implements TabulatedFunction{
 
     @Override
     public void setPoint(int index, FunctionPoint point) throws InappropriateFunctionPointException {
-        if(this.fileNameAssigned)
-            this.modified = true;
+        this.modified = true;
 
         this.tabulatedFunction.setPoint(index, point);
     }
 
     @Override
     public void setPointX(int index, double x) throws InappropriateFunctionPointException {
-        if(this.fileNameAssigned)
-            this.modified = true;
+        this.modified = true;
 
         this.tabulatedFunction.setPointX(index, x);
     }
 
     @Override
     public void setPointY(int index, double y) {
-        if(this.fileNameAssigned)
-            this.modified = true;
+        this.modified = true;
 
         this.tabulatedFunction.setPointY(index, y);
     }
 
     @Override
     public void deletePoint(int index) {
-        if(this.fileNameAssigned)
-            this.modified = true;
+        this.modified = true;
 
         this.tabulatedFunction.deletePoint(index);
     }
 
     @Override
     public void addPoint(FunctionPoint point) throws InappropriateFunctionPointException {
-        if(this.fileNameAssigned)
-            this.modified = true;
+        this.modified = true;
 
         this.tabulatedFunction.addPoint(point);
     }

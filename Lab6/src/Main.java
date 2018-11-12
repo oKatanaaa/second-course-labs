@@ -1,10 +1,8 @@
 import functions.*;
-import functions.basic.*;
-import gui.frames.DialogTableFrame;
+import gui.frames.dialogTableFrame.DialogTableFrame;
 
 
 import java.awt.*;
-import java.io.*;
 
 public class Main{
     public static void main(String[] args) {
@@ -14,7 +12,7 @@ public class Main{
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                DialogTableFrame frame = new DialogTableFrame(tempArr1);
+                DialogTableFrame frame = new DialogTableFrame();
                 frame.setVisible(true);
             }
         });
