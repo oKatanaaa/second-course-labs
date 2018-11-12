@@ -1,24 +1,27 @@
-package gui;
+package gui.models;
 
-import functions.ArrayTabulatedFunction;
 import functions.InappropriateFunctionPointException;
 import functions.TabulatedFunction;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
 import java.awt.*;
 
-public class TabulatedFunctionTableModel extends DefaultTableModel {
+public class TabulatedFunctionTableModel implements TableModel {
     private TabulatedFunction fun;
     private Component parent;
 
 
-    TabulatedFunctionTableModel(TabulatedFunction fun, Component parent) {
+    public TabulatedFunctionTableModel(TabulatedFunction fun, Component parent) {
         this.fun = fun;
         this.parent = parent;
     }
 
+    @Override
     public int getRowCount() {
+        if(this.fun == null)
+            return 1;
         return this.fun.getPointsCount();
     }
 
@@ -27,7 +30,9 @@ public class TabulatedFunctionTableModel extends DefaultTableModel {
         return 2;
     }
 
+    @Override
     public String getColumnName(int index) {
+        System.out.println("getColumnName");
         switch (index) {
             case 0:
                 return "x";
@@ -35,19 +40,20 @@ public class TabulatedFunctionTableModel extends DefaultTableModel {
                 return "y";
 
             default:
-                    throw new IllegalArgumentException("Wrong index!");
+                throw new IllegalArgumentException("Wrong index!");
         }
     }
-
+    @Override
     public Class getColumnClass(int index) {
         return Double.class;
     }
 
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return 0 <= rowIndex && rowIndex < this.fun.getPointsCount() &&
-                0 <= columnIndex && columnIndex <= 1;
+        return true;
     }
 
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         switch(columnIndex) {
             case 0:
@@ -56,10 +62,10 @@ public class TabulatedFunctionTableModel extends DefaultTableModel {
                 return this.fun.getPointY(rowIndex);
 
             default:
-                    throw new IllegalArgumentException("Wrong column index!");
+                throw new IllegalArgumentException("Wrong column index!");
         }
     }
-
+    @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
         if(!(value instanceof Integer) || !(value instanceof Double))
             JOptionPane.showMessageDialog(this.parent, "Incorrect value!");
@@ -79,5 +85,19 @@ public class TabulatedFunctionTableModel extends DefaultTableModel {
         if(columnIndex == 1) {
             this.fun.setPointY(rowIndex, (Double) value);
         }
+    }
+
+    public void setFun(TabulatedFunction fun) {
+        this.fun = fun;
+    }
+
+    @Override
+    public void addTableModelListener(TableModelListener tableModelListener) {
+        //TODO
+    }
+
+    @Override
+    public void removeTableModelListener(TableModelListener tableModelListener) {
+        //TODO
     }
 }
