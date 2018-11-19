@@ -2,16 +2,19 @@ import functions.*;
 import functions.basic.Cos;
 import functions.basic.Exp;
 import functions.basic.Log;
-import functions.threads.Task;
+import functions.threads.*;
 import gui.frames.dialogTableFrame.DialogTableFrame;
 
 
 import java.awt.*;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
+
+import static java.lang.Thread.sleep;
 
 public class Main{
-    public static void main(String[] args) {
-        nonThread();
+    public static void main(String[] args) throws InterruptedException {
+        complicatedThreads();
       /*  double[] values = new double[] {1, 2, 3, 4, 5, 6};
         ArrayTabulatedFunction tempArr1 = new functions.ArrayTabulatedFunction(0, 10, values);
 
@@ -41,8 +44,32 @@ public class Main{
         }
     }
 
-    public static void simpleThreads() {
+    public static void simpleThreads() throws InterruptedException {
         Task task = new Task();
         task.taskCount = 100;
+        SimpleGenerator generator = new SimpleGenerator(task);
+        SimpleIntegrator integrator = new SimpleIntegrator(task);
+        Thread genThread = new Thread(generator);
+        Thread intThread = new Thread(integrator);
+        genThread.setPriority(Thread.MAX_PRIORITY);
+        intThread.setPriority(Thread.MIN_PRIORITY);
+
+
+        genThread.start();
+        intThread.start();
+    }
+
+    public static void complicatedThreads() throws InterruptedException {
+        Task task = new Task();
+        task.taskCount = 100;
+        Semaphore semaphore = new Semaphore(1);
+        Generator generator = new Generator(task, semaphore);
+        Integrator integrator = new Integrator(task, semaphore);
+        generator.start();
+        integrator.start();
+
+        Thread.sleep(100);
+        generator.interrupt();
+        integrator.interrupt();
     }
 }
