@@ -2,42 +2,25 @@ package functions.threads;
 
 import functions.Functions;
 
-import java.util.concurrent.Semaphore;
+public class SimpleIntegrator implements Runnable {
+    private final Task task;
 
-public class Integrator extends Thread {
-    private Task task;
-    private Semaphore semaphore;
-
-    public Integrator(Task task, Semaphore semaphore) {
+    public SimpleIntegrator(Task task) {
         this.task = task;
-        this.semaphore = semaphore;
     }
-
     @Override
     public void run() {
         for(int i = 0; i < task.taskCount; i++) {
-            if(this.isInterrupted()) {
-                System.out.println("Integrator is interrupted.");
-                break;
-            }
-            try {
-                semaphore.acquire();
+            synchronized (task) {
                 if (task.fun == null) {
                     System.out.println(this.getClass().getName() + " continues");
                     continue;
                 }
-
-
                 double result = Functions.integrate(task.fun, task.leftIntegrationBorder, task.rightIntegrationBorder, task.discreteStep);
                 System.out.println(this.getClass().getName() + " " + task.leftIntegrationBorder + " " +
                         task.rightIntegrationBorder + " " +
                         task.discreteStep + " " +
                         result);
-
-                semaphore.release();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                break;
             }
         }
     }
