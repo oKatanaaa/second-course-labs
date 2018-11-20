@@ -1,7 +1,14 @@
 package functions;
 
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Spliterator;
+import java.util.function.Consumer;
+
 public class LinkedListTabulatedFunction implements TabulatedFunction{
+
+
     private static class FunctionNode{
         private FunctionPoint point;
         private FunctionNode prev;
@@ -377,6 +384,56 @@ public class LinkedListTabulatedFunction implements TabulatedFunction{
         }
 
         return new LinkedListTabulatedFunction(pointArr);
+    }
+
+    @Override
+    public Iterator<FunctionPoint> iterator() {
+        return new Iterator<FunctionPoint>() {
+            private LinkedListTabulatedFunction outer = LinkedListTabulatedFunction.this;
+            private LinkedListTabulatedFunction.FunctionNode current = outer.head;
+            @Override
+            public boolean hasNext() {
+                return current.next != outer.head;
+            }
+
+            @Override
+            public FunctionPoint next() {
+                if(hasNext()) {
+                    current = current.next;
+                    return current.point;
+                } else
+                    throw new NoSuchElementException();
+
+            }
+        };
+    }
+
+    @Override
+    public void forEach(Consumer<? super FunctionPoint> action) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Spliterator<FunctionPoint> spliterator() {
+        return null;
+    }
+
+    public static class LinkedListTabulatedFunctionFactory implements TabulatedFunctionFactory {
+
+        @Override
+        public TabulatedFunction createTabulatedFunction(double leftX, double rightX, double[] values) {
+            return new LinkedListTabulatedFunction(leftX, rightX, values);
+        }
+
+        @Override
+        public TabulatedFunction createTabulatedFunction(FunctionPoint[] points) {
+            return new LinkedListTabulatedFunction(points);
+        }
+
+        @Override
+        public TabulatedFunction createTabulatedFunction(double leftX, double rightX, int pointsCount) {
+            return new LinkedListTabulatedFunction(leftX, rightX, pointsCount);
+        }
     }
 
 }

@@ -3,6 +3,9 @@ package gui;
 import functions.*;
 
 import java.io.*;
+import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 
 public class TabulatedFunctionDocument implements TabulatedFunction{
     private TabulatedFunction tabulatedFunction;
@@ -154,5 +157,20 @@ public class TabulatedFunctionDocument implements TabulatedFunction{
     @Override
     public double getFunctionValue(double x) {
         return this.tabulatedFunction.getFunctionValue(x);
+    }
+
+    @Override
+    public Iterator<FunctionPoint> iterator() {
+        return null;
+    }
+
+    @Override
+    public void forEach(Consumer<? super FunctionPoint> action) {
+
+    }
+
+    @Override
+    public Spliterator<FunctionPoint> spliterator() {
+        return null;
     }
 }

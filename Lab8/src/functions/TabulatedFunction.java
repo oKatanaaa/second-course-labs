@@ -2,7 +2,7 @@ package functions;
 
 import java.io.Serializable;
 
-public interface TabulatedFunction extends Function, Serializable, Cloneable {
+public interface TabulatedFunction extends Function, Serializable, Cloneable, Iterable<FunctionPoint> {
     int getPointsCount();
 
     FunctionPoint getPoint(int index);

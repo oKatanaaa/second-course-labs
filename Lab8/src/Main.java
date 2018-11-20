@@ -2,6 +2,7 @@ import functions.*;
 import functions.basic.Cos;
 import functions.basic.Exp;
 import functions.basic.Log;
+import functions.basic.Sin;
 import functions.threads.*;
 import gui.frames.dialogTableFrame.DialogTableFrame;
 
@@ -14,17 +15,55 @@ import static java.lang.Thread.sleep;
 
 public class Main{
     public static void main(String[] args) throws InterruptedException {
-        complicatedThreads();
-      /*  double[] values = new double[] {1, 2, 3, 4, 5, 6};
-        ArrayTabulatedFunction tempArr1 = new functions.ArrayTabulatedFunction(0, 10, values);
+        double[] values = new double[] {1, 2, 3, 4, 5, 6};
+        ArrayTabulatedFunction tempArr1 = new ArrayTabulatedFunction(0, 10, values);
+        for(FunctionPoint point: tempArr1)
+            System.out.println(point);
 
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                DialogTableFrame frame = new DialogTableFrame();
-                frame.setVisible(true);
-            }
-        });*/
+        LinkedListTabulatedFunction list = new LinkedListTabulatedFunction(0, 10, values);
+        for(FunctionPoint point: list)
+            System.out.println(point);
+
+        Function f = new Cos();
+        TabulatedFunction tf;
+        tf = TabulatedFunctions.tabulate(f, 0, Math.PI, 11);
+        System.out.println(tf.getClass());
+
+        TabulatedFunctions.setTabulatedFunctionFactory(new
+                LinkedListTabulatedFunction.LinkedListTabulatedFunctionFactory());
+        tf = TabulatedFunctions.tabulate(f, 0, Math.PI, 11);
+        System.out.println(tf.getClass());
+
+        TabulatedFunctions.setTabulatedFunctionFactory(new
+                ArrayTabulatedFunction.ArrayTabulatedFunctionFactory());
+        tf = TabulatedFunctions.tabulate(f, 0, Math.PI, 11);
+        System.out.println(tf.getClass());
+
+        TabulatedFunction f2;
+        f2 = TabulatedFunctions.createTabulatedFunction(
+                0, 10, 3, ArrayTabulatedFunction.class);
+        System.out.println(f2.getClass());
+        System.out.println(f2);
+
+        f2 = TabulatedFunctions.createTabulatedFunction(
+                0, 10, new double[] {0, 10},ArrayTabulatedFunction.class);
+        System.out.println(f2.getClass());
+        System.out.println(f2);
+        f2 = TabulatedFunctions.createTabulatedFunction(
+                new FunctionPoint[] {
+                        new FunctionPoint(0, 0),
+                        new FunctionPoint(10, 10)
+                },
+                LinkedListTabulatedFunction.class
+
+        );
+        System.out.println(f2.getClass());
+        System.out.println(f2);
+
+        f2 = TabulatedFunctions.tabulate(
+                new Sin(), 0, Math.PI, 11, LinkedListTabulatedFunction.class);
+        System.out.println(f2.getClass());
+        System.out.println(f2);
     }
 
     public static void nonThread() {

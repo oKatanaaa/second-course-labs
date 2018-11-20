@@ -2,6 +2,10 @@ package functions;
 
 
 import java.awt.image.DataBufferInt;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 
 public class ArrayTabulatedFunction implements TabulatedFunction{
 
@@ -296,4 +300,52 @@ public class ArrayTabulatedFunction implements TabulatedFunction{
     }
 
 
+    @Override
+    public Iterator<FunctionPoint> iterator() {
+        return new Iterator<FunctionPoint>() {
+            private ArrayTabulatedFunction outer = ArrayTabulatedFunction.this;
+            private int index = -1;
+
+            @Override
+            public boolean hasNext() {
+                return index + 1 < outer.pointsCount;
+            }
+
+            @Override
+            public FunctionPoint next() {
+                if(hasNext())
+                    return new FunctionPoint(outer.array[++index]);
+                else
+                    throw new NoSuchElementException("Next element does not exist.");
+            }
+        };
+    }
+
+    @Override
+    public void forEach(Consumer<? super FunctionPoint> action) throws UnsupportedOperationException{
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Spliterator<FunctionPoint> spliterator() {
+        return null;
+    }
+
+    public static class ArrayTabulatedFunctionFactory implements TabulatedFunctionFactory {
+
+        @Override
+        public TabulatedFunction createTabulatedFunction(double leftX, double rightX, double[] values) {
+            return new ArrayTabulatedFunction(leftX, rightX, values);
+        }
+
+        @Override
+        public TabulatedFunction createTabulatedFunction(FunctionPoint[] points) {
+            return new ArrayTabulatedFunction(points);
+        }
+
+        @Override
+        public TabulatedFunction createTabulatedFunction(double leftX, double rightX, int pointsCount) {
+            return new ArrayTabulatedFunction(leftX, rightX, pointsCount);
+        }
+    }
 }
